@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Dự Án - OpenCrazyArcade</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0e4c8d 0%, #1771c5 50%, #208eeb 100%);
+            color: #ffffff;
+            height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tùy chỉnh thanh cuộn đẹp mắt */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 30, 60, 0.4);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4facfe;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f2fe;
+        }
+
+        /* Header Trang Dự Án */
+        .project-header {
+            background: rgba(4, 28, 56, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #2982d6;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .project-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #ffdf40;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+        }
+
+        .badges-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .badge-github {
+            background: #1c3b60;
+            border: 1px solid #3e6d9c;
+            color: #58a6ff;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Bố cục nội dung chính */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 12px;
+            padding: 12px 16px;
+            flex: 1;
+        }
+
+        /* Hộp nội dung / Thẻ card */
+        .card {
+            background: rgba(10, 44, 82, 0.7);
+            border-radius: 8px;
+            border: 1px solid rgba(80, 160, 240, 0.3);
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffe066;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 4px;
+        }
+
+        .desc-text {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #e6f2ff;
+            margin-bottom: 10px;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-size: 11px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #d8eeff;
+        }
+
+        .feature-item .check {
+            color: #00e676;
+            font-weight: bold;
+        }
+
+        /* Cột liên kết & Đóng góp */
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(80, 160, 240, 0.3);
+            padding: 7px 12px;
+            border-radius: 6px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-link:hover {
+            background: rgba(30, 100, 180, 0.45);
+            border-color: #4facfe;
+            transform: translateX(3px);
+            color: #ffeb3b;
+        }
+
+        .btn-link .arrow {
+            font-size: 12px;
+            color: #4facfe;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-link:hover .arrow {
+            color: #ffeb3b;
+            transform: translateX(2px);
+        }
+
+        /* Ticker chân trang */
+        .ticker-bar {
+            background: rgba(3, 20, 40, 0.9);
+            padding: 5px 12px;
+            font-size: 11px;
+            color: #ffeb3b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid #1e5a96;
+        }
+
+        .ticker-label {
+            background: #0288d1;
+            color: white;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 1px 6px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .ticker-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Thông tin Dự án -->
+    <div class="project-header">
+        <div class="project-brand">
+            <span>✨</span>
+            <span>OPENCRAZYARCADE (OCA)</span>
+        </div>
+        <div class="badges-group">
+            <span class="badge badge-github">★ GitHub Open Source</span>
+            <span class="badge">v116 Pure Native</span>
+        </div>
+    </div>
+
+    <!-- Nội dung 2 cột -->
+    <div class="content-grid">
+        <!-- Cột giới thiệu & tính năng -->
+        <div class="card">
+            <div class="card-title">
+                <span>🚀</span>
+                <span>DỰ ÁN TÁI HIỆN BOOM ONLINE</span>
+            </div>
+            <p class="desc-text">
+                OpenCrazyArcade là dự án mã nguồn mở phi thương mại, tái hiện trọn vẹn máy chủ và giao thức mạng cho trò chơi huyền thoại Boom Online (Crazy Arcade) mà không cần chỉnh sửa binary gốc của client.
+            </p>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <span class="check">✔</span>
+                    <span>Đăng ký nhanh tài khoản ngay trong giao diện game.</span>
+                </li>
+                <li class="feature-item">
+                    <span class="check">✔</span>
+                    <span>Phòng chờ PvP: Chọn bản đồ, đổi nhân vật, đổi màu đội.</span>
+                </li>
+                <li class="feature-item">
+                    <span class="check">✔</span>
+                    <span>Gameplay PvP chuẩn xác: Sút bom giày xanh, cứu sặc nước.</span>
+                </li>
+                <li class="feature-item">
+                    <span class="check">✔</span>
+                    <span>Mạng UDP Relay Fallback xuyên tường lửa & NAT.</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Cột liên kết & Mã nguồn -->
+        <div class="card">
+            <div class="card-title">
+                <span>🌐</span>
+                <span>LIÊN KẾT & MÃ NGUỒN</span>
+            </div>
+            <div class="links-container">
+                <a href="https://github.com/OpenCrazyArcade" target="_blank" class="btn-link">
+                    <span>⭐ Ghé thăm GitHub Organization</span>
+                    <span class="arrow">➜</span>
+                </a>
+                <a href="https://opencrazyarcade.github.io/" target="_blank" class="btn-link">
+                    <span>📖 Trang Web Chính Thức</span>
+                    <span class="arrow">➜</span>
+                </a>
+                <a href="https://github.com/OpenCrazyArcade/OpenCrazyArcade/tree/master/RE" target="_blank" class="btn-link">
+                    <span>🔬 Kho Tài Liệu Reverse Engineering</span>
+                    <span class="arrow">➜</span>
+                </a>
+                <a href="https://github.com/OpenCrazyArcade/OpenCrazyArcade/issues" target="_blank" class="btn-link">
+                    <span>💬 Đóng Góp Ý Kiến & Báo Lỗi</span>
+                    <span class="arrow">➜</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticker chân trang -->
+    <div class="ticker-bar">
+        <span class="ticker-label">DỰ ÁN</span>
+        <span class="ticker-text">Phát triển bởi cộng đồng yêu thích Boom Online - From Zero To PvP Milestone</span>
+    </div>
+
+</body>
+</html>
