@@ -42,6 +42,9 @@
         .rel-main { flex: 1; min-width: 0; }
         .rel-title { font-weight: 700; color: var(--blue); }
         .rel-title .tag { margin: 0 0 0 6px; }
+        .rel-sums { margin-top: 2px; font-size: 12px; color: var(--ink-soft); }
+        .rel-sums summary { cursor: pointer; }
+        .rel-sums code { display: block; font-family: Consolas, monospace; font-size: 11px; word-break: break-all; margin-top: 2px; }
         .rel-notes { white-space: pre-line; color: var(--ink); font-size: 12px; line-height: 17px; margin-top: 2px; }
         .rel-act { flex: none; text-align: right; min-width: 110px; }
         .rel-act .state { display: block; font-size: 11px; color: var(--ink-soft); margin-top: 3px; }
@@ -187,6 +190,16 @@
                 var fl = document.createElement('div'); fl.className = 'muted';
                 fl.textContent = 'Tệp: ' + r.files.map(function (f) { return f.name; }).join(', ');
                 main.appendChild(fl);
+                /* the hashes, folded away: useful to compare by hand, noise otherwise */
+                if (r.files.some(function (f) { return f.sha256; })) {
+                    var dt2 = document.createElement('details'); dt2.className = 'rel-sums';
+                    var sm = document.createElement('summary'); sm.textContent = 'Mã SHA-256 của các tệp'; dt2.appendChild(sm);
+                    r.files.forEach(function (f) {
+                        if (!f.sha256) return;
+                        var ln = document.createElement('code'); ln.textContent = f.name + '  ' + f.sha256; dt2.appendChild(ln);
+                    });
+                    main.appendChild(dt2);
+                }
                 if (r.notes) { var p = document.createElement('div'); p.className = 'rel-notes'; p.textContent = r.notes; main.appendChild(p); }
                 li.appendChild(main);
 
