@@ -144,7 +144,8 @@
                     files.push({ name: name, url: x.browser_download_url, sha256: shaOf[key] || digest });
                 });
                 if (!v || r.draft || !files.length) return;
-                var notes = (r.body || '').replace(/<!--[\s\S]*?-->/g, '').trim();
+                /* what the release notes hold besides the changes: the hidden attachments.json and the SHA-256 block */
+                var notes = (r.body || '').replace(/<!--[\s\S]*?-->/g, '').replace(/\n*-{3,}\s*\n\*\*SHA-256\*\*[\s\S]*$/, '').trim();
                 out.push({ tag: r.tag_name, v: v, text: v.join('.'), date: r.published_at, notes: notes, files: files });
             });
             return out.sort(function (x, y) { return cmp(y.v, x.v); });
