@@ -34,6 +34,18 @@
         .btn-link:hover { background: var(--blue-light); color: var(--orange-2); text-decoration: none; }
         .cast img { width: calc(33.333% - 6px); }
 
+        /* launcher releases: one row per version, with the button that asks the launcher to install it */
+        .releases { grid-column: 1 / -1; }
+        .rel-list { list-style: none; }
+        .rel-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px dotted var(--sky-line); }
+        .rel-item:last-child { border-bottom: 0; }
+        .rel-main { flex: 1; min-width: 0; }
+        .rel-title { font-weight: 700; color: var(--blue); }
+        .rel-title .tag { margin: 0 0 0 6px; }
+        .rel-notes { white-space: pre-line; color: var(--ink); font-size: 12px; line-height: 17px; margin-top: 2px; }
+        .rel-act { flex: none; text-align: right; min-width: 110px; }
+        .rel-act .state { display: block; font-size: 11px; color: var(--ink-soft); margin-top: 3px; }
+        .rel-act .state.err { color: var(--red); }
         .ticker-bar { position: relative; z-index: 1; margin: 18px 20px 16px; padding: 7px 18px; display: flex; align-items: center; gap: 10px; background: var(--foot); color: var(--blue-dark); border-radius: 18px; font-size: 12px; }
         .ticker-label { flex: none; color: #fff; background: var(--orange); font-size: 10px; font-weight: 700; padding: 0 6px; line-height: 15px; border-radius: 2px; }
         .ticker-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -72,9 +84,14 @@
             <div class="links-container">
                 <a href="https://github.com/OpenCrazyArcade" target="_blank" class="btn-link">Ghé thăm GitHub Organization</a>
                 <a href="https://opencrazyarcade.github.io/" target="_blank" class="btn-link">Trang Web Chính Thức</a>
-                <a href="https://github.com/OpenCrazyArcade/OpenCrazyArcade/tree/master/RE" target="_blank" class="btn-link">Kho Tài Liệu Reverse Engineering</a>
                 <a href="https://github.com/OpenCrazyArcade/OpenCrazyArcade/issues" target="_blank" class="btn-link">Đóng Góp Ý Kiến &amp; Báo Lỗi</a>
             </div>
+        </section>
+
+        <section class="card releases">
+            <h3>PHIÊN BẢN LAUNCHER</h3>
+            <p class="muted" id="rel-hint">Đang tải danh sách phiên bản...</p>
+            <ul class="rel-list" id="rel-list"></ul>
         </section>
     </div>
 
@@ -83,5 +100,145 @@
         <span class="ticker-text">Phát triển bởi cộng đồng yêu thích Boom Online - From Zero To PvP Milestone</span>
     </div>
 
+    <script>
+    /* Launcher versions. The list is the releases of github.com/OpenCrazyArcade/AutoUpdate. Inside the launcher each row
+       has a button that asks the launcher to install that release - newer or older; the launcher shows its own
+       confirmation first. A release is a set of files: the launcher itself (AutoUpdate.exe) and the client files it puts
+       in the game folder (FILES below). The release notes carry attachments.json as an HTML comment (a browser cannot
+       download release assets cross-origin), which gives the SHA-256 of each file; older releases fall back to the digest
+       GitHub reports. The launcher answers "hello" with the SHA-256 of what is installed, so the page offers only the
+       files that differ, and the launcher itself decides where each file goes. */
+    (function () {
+        var FEED = 'https://api.github.com/repos/OpenCrazyArcade/AutoUpdate/releases';
+        var host = window.chrome && window.chrome.webview;
+        var current = null, installed = null, legacyDll = null, releases = [], busy = null, loaded = false;
+        /* asset name (lower case) -> name the launcher expects. Anything else in a release is not offered. */
+        var FILES = {
+            'autoupdate.exe': 'AutoUpdate.exe', 'nmco3.dll': 'nmco3.dll', 'ehsvc.dll': 'ehsvc.dll',
+            'hsupdate.exe': 'hsupdate.exe', 'caplay.dll': 'CAPlay.dll', 'ddraw.dll': 'ddraw.dll'
+        };
+        /* A launcher older than 1.1 knows only these two and answers hello without "components". */
+        var LEGACY = { 'AutoUpdate.exe': 1, 'nmco3.dll': 1 };
+        var list = document.getElementById('rel-list'), hint = document.getElementById('rel-hint');
+
+        function parse(v) { var m = /^v?(\d+)\.(\d+)\.(\d+)/i.exec(v || ''); return m ? [+m[1], +m[2], +m[3]] : null; }
+        function cmp(a, b) { for (var i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] < b[i] ? -1 : 1; return 0; }
+        function lower(s) { return s ? String(s).toLowerCase() : null; }
+
+        /* attachments.json of a release, embedded in its notes: <!-- attachments: {...} --> */
+        function attachmentsOf(body) {
+            var m = /<!--\s*attachments:\s*(\{[\s\S]*?\})\s*-->/.exec(body || '');
+            if (!m) return null;
+            try { var a = JSON.parse(m[1]); return a && a.schema === 1 && Array.isArray(a.files) ? a : null; } catch (e) { return null; }
+        }
+
+        function normalise(raw) {
+            var out = [];
+            (raw || []).forEach(function (r) {
+                var v = parse(r.tag_name), files = [], att = attachmentsOf(r.body), shaOf = {};
+                if (att) att.files.forEach(function (f) { shaOf[lower(f.name)] = lower(f.sha256); });
+                (r.assets || []).forEach(function (x) {
+                    var key = lower(x.name), name = FILES[key];
+                    if (!name) return;
+                    var digest = /^sha256:/i.test(x.digest || '') ? lower(x.digest.slice(7)) : null;
+                    files.push({ name: name, url: x.browser_download_url, sha256: shaOf[key] || digest });
+                });
+                if (!v || r.draft || !files.length) return;
+                var notes = (r.body || '').replace(/<!--[\s\S]*?-->/g, '').trim();
+                out.push({ tag: r.tag_name, v: v, text: v.join('.'), date: r.published_at, notes: notes, files: files });
+            });
+            return out.sort(function (x, y) { return cmp(y.v, x.v); });
+        }
+
+        /* Which files of release r are not what is installed. rel = release version compared with the launcher's. */
+        function differing(r, rel) {
+            return r.files.filter(function (f) {
+                if (!installed && !LEGACY[f.name]) return false;            /* an old launcher cannot take it */
+                if (f.name === 'AutoUpdate.exe') return rel !== 0;
+                if (!installed) return f.name === 'nmco3.dll' && legacyDll !== r.text;
+                return !f.sha256 || installed[f.name] !== f.sha256;
+            });
+        }
+
+        function render() {
+            list.textContent = '';
+            hint.hidden = releases.length > 0;
+            if (!releases.length) { hint.textContent = loaded ? 'Chưa có phiên bản nào được phát hành.' : 'Đang tải danh sách phiên bản...'; return; }
+            if (!host) { hint.hidden = false; hint.textContent = 'Mở trang này trong launcher để cài đặt hoặc đổi phiên bản.'; }
+            else if (current) {
+                hint.hidden = false;
+                var latest = releases[0], cur0 = parse(current), text = 'Đang dùng: launcher v' + current;
+                if (installed && cur0) {
+                    var d = differing(latest, cmp(latest.v, cur0)).filter(function (f) { return f.name !== 'AutoUpdate.exe'; });
+                    var total = latest.files.filter(function (f) { return f.name !== 'AutoUpdate.exe'; }).length;
+                    text += ' · tệp client khớp bản mới nhất: ' + (total - d.length) + '/' + total;
+                } else if (!installed) text += ' · nmco3.dll ' + (legacyDll ? 'v' + legacyDll : 'chưa cài');
+                hint.textContent = text;
+            }
+            var cur = current && parse(current);
+            releases.forEach(function (r, i) {
+                var li = document.createElement('li'); li.className = 'rel-item';
+                var main = document.createElement('div'); main.className = 'rel-main';
+                var t = document.createElement('div'); t.className = 'rel-title'; t.textContent = 'v' + r.text;
+                if (i === 0) { var n = document.createElement('span'); n.className = 'tag hot'; n.textContent = 'MỚI NHẤT'; t.appendChild(n); }
+                if (r.date) { var dt = document.createElement('span'); dt.className = 'muted'; dt.textContent = '  ' + new Date(r.date).toLocaleDateString('vi-VN'); t.appendChild(dt); }
+                main.appendChild(t);
+                var fl = document.createElement('div'); fl.className = 'muted';
+                fl.textContent = 'Tệp: ' + r.files.map(function (f) { return f.name; }).join(', ');
+                main.appendChild(fl);
+                if (r.notes) { var p = document.createElement('div'); p.className = 'rel-notes'; p.textContent = r.notes; main.appendChild(p); }
+                li.appendChild(main);
+
+                if (host && cur) {
+                    var act = document.createElement('div'); act.className = 'rel-act';
+                    var rel = cmp(r.v, cur), todo = differing(r, rel);
+                    if (rel === 0) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = todo.length ? 'ĐANG DÙNG (lệch ' + todo.length + ' tệp)' : 'ĐANG DÙNG'; act.appendChild(s); }
+                    if (todo.length) {
+                        var b = document.createElement('button'); b.type = 'button'; b.className = 'btn small' + (rel > 0 ? ' primary' : '');
+                        b.textContent = rel > 0 ? 'Cập nhật' : rel < 0 ? 'Hạ cấp' : 'Cài ' + todo.length + ' tệp';
+                        b.title = 'Sẽ cài: ' + todo.map(function (f) { return f.name; }).join(', ');
+                        b.disabled = !!busy;
+                        b.onclick = function () {
+                            busy = r.tag; render();
+                            host.postMessage({ action: 'install', version: r.text, files: todo.map(function (f) { return { name: f.name, url: f.url, sha256: f.sha256 }; }) });
+                        };
+                        act.appendChild(b);
+                    }
+                    if (busy === r.tag) { var st = document.createElement('span'); st.className = 'state'; st.id = 'rel-state'; st.textContent = 'Đang chờ xác nhận...'; act.appendChild(st); }
+                    li.appendChild(act);
+                }
+                list.appendChild(li);
+            });
+        }
+
+        if (host) {
+            host.addEventListener('message', function (e) {
+                var m = e.data || {};
+                if (m.type === 'hello') {
+                    current = m.version;
+                    installed = m.components || null;                       /* absent: a launcher older than 1.1 */
+                    if (installed) Object.keys(installed).forEach(function (k) { installed[k] = lower(installed[k]); });
+                    legacyDll = m.nmco3 || null;
+                    render();
+                }
+                else if (m.type === 'install') {
+                    var st = document.getElementById('rel-state');
+                    if (m.state === 'downloading' && st) st.textContent = 'Đang tải ' + (m.file || '') + '... ' + (m.percent || 0) + '%';
+                    else if (m.state === 'done') { busy = null; host.postMessage({ action: 'hello' }); }
+                    else if (m.state === 'declined' || m.state === 'error') {
+                        busy = null; render();
+                        if (m.state === 'error') { hint.hidden = false; hint.textContent = m.message || 'Không cài đặt được.'; }
+                    }
+                }
+            });
+            host.postMessage({ action: 'hello' });
+        }
+
+        fetch(FEED, { headers: { Accept: 'application/vnd.github+json' } })
+            .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+            .then(function (raw) { releases = normalise(Array.isArray(raw) ? raw : [raw]); loaded = true; render(); })
+            .catch(function () { loaded = true; hint.textContent = 'Không tải được danh sách phiên bản.'; });
+    })();
+    </script>
 </body>
 </html>
