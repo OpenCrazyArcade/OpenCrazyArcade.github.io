@@ -114,7 +114,7 @@
     (function () {
         var FEED = 'https://api.github.com/repos/OpenCrazyArcade/AutoUpdate/releases';
         var host = window.chrome && window.chrome.webview;
-        var current = null, installed = null, legacyDll = null, releases = [], busy = null, loaded = false;
+        var current = null, installed = null, legacyDll = null, releases = [], busy = null, loaded = false, working = false;
         /* asset name (lower case) -> name the launcher expects. Anything else in a release is not offered. */
         var FILES = {
             'autoupdate.exe': 'AutoUpdate.exe', 'nmco3.dll': 'nmco3.dll', 'ehsvc.dll': 'ehsvc.dll',
@@ -172,6 +172,7 @@
             else if (current) {
                 hint.hidden = false;
                 var latest = releases[0], cur0 = parse(current), text = 'Đang dùng: launcher v' + current;
+                if (working) text += ' · đang cập nhật tệp game, vui lòng đợi...';
                 if (installed && cur0) {
                     var d = differing(latest, cmp(latest.v, cur0)).filter(function (f) { return f.name !== 'AutoUpdate.exe'; });
                     var total = latest.files.filter(function (f) { return f.name !== 'AutoUpdate.exe'; }).length;
@@ -211,7 +212,7 @@
                         var b = document.createElement('button'); b.type = 'button'; b.className = 'btn small' + (rel > 0 ? ' primary' : '');
                         b.textContent = rel > 0 ? 'Cập nhật' : rel < 0 ? 'Hạ cấp' : 'Cài ' + todo.length + ' tệp';
                         b.title = 'Sẽ cài: ' + todo.map(function (f) { return f.name; }).join(', ');
-                        b.disabled = !!busy;
+                        b.disabled = !!busy || working;
                         b.onclick = function () {
                             busy = r.tag; render();
                             host.postMessage({ action: 'install', version: r.text, files: todo.map(function (f) { return { name: f.name, url: f.url, sha256: f.sha256 }; }) });
@@ -230,6 +231,7 @@
                 var m = e.data || {};
                 if (m.type === 'hello') {
                     current = m.version;
+                    working = !!m.busy;                                      /* the launcher is writing game files */
                     installed = m.components || null;                       /* absent: a launcher older than 1.1 */
                     if (installed) Object.keys(installed).forEach(function (k) { installed[k] = lower(installed[k]); });
                     legacyDll = m.nmco3 || null;
