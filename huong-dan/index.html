@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hướng dẫn tải và chơi - OpenCrazyArcade</title>
+  <!-- Shared styles of the project: /assets/theme.css and /assets/landing.css. -->
+  <link rel="stylesheet" href="/assets/theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand">OpenCrazyArcade</span>
+    <nav>
+      <a href="/">Trang chủ</a>
+      <a href="/huong-dan/" aria-current="page">Hướng dẫn</a>
+      <a href="https://github.com/OpenCrazyArcade">GitHub</a>
+    </nav>
+  </header>
+
+  <main class="wrap landing">
+    <section class="promo">
+      <div class="promo-text">
+        <span class="kicker">HƯỚNG DẪN</span>
+        <h1>Tải game &amp;<br>bắt đầu chơi</h1>
+        <p>Bảy bước từ lúc cài game đến lúc vào phòng chờ. Phần lớn thời gian là chờ tải và cập nhật file.</p>
+        <div class="promo-btns">
+          <a class="btn primary big" href="https://github.com/OpenCrazyArcade/AutoUpdate/releases">Tải launcher</a>
+          <a class="btn big" href="#cac-buoc">Xem các bước</a>
+        </div>
+      </div>
+      <div class="promo-art" aria-hidden="true"><img src="/assets/img/chara04.png" alt=""><img src="/assets/img/chara14.png" alt=""><img src="/assets/img/chara15.png" alt=""></div>
+    </section>
+
+    <div class="land-grid">
+      <div>
+        <section class="card">
+          <h2>Bạn cần chuẩn bị</h2>
+          <ul class="news">
+            <li><b>Windows 10 hoặc 11.</b> Launcher chạy bằng quyền quản trị, Windows sẽ hỏi xác nhận khi mở.</li>
+            <li><b>Bộ cài game Boom Online <code>boom-online_253.exe</code></b>. File này trước đây được phát hành bởi VNG, hiện lưu giữ một bản tại <a href="https://github.com/OpenCrazyArcade/Warehouse/releases/tag/boom-online_253">kho lưu trữ Warehouse</a>.</li>
+            <li><b>Địa chỉ một máy chủ cộng đồng.</b> Địa chỉ máy chủ mà game client sẽ kết nối đến, có thể là OCAServer.</li>
+          </ul>
+        </section>
+
+        <section class="card" id="cac-buoc">
+          <h2>Các bước</h2>
+          <ol class="steps">
+            <li class="step">
+              <h4>Cài game</h4>
+              <p>Tải bộ cài <a href="https://github.com/OpenCrazyArcade/Warehouse/releases/download/boom-online_253/boom-online_253.exe"><code>boom-online_253.exe</code></a> (khoảng 490 MB, đối chiếu SHA-256 ở cột bên), chạy và cài như thường. Cài xong bạn chưa cần mở game, thư mục vừa cài sẽ có <code>CA.exe</code>.</p>
+            </li>
+            <li class="step">
+              <h4>Tải launcher</h4>
+              <p>Vào trang <a href="https://github.com/OpenCrazyArcade/AutoUpdate/releases">Releases</a> và tải <code>AutoUpdate.exe</code> của phiên bản mới nhất. File nặng khoảng 70 MB, không cần cài thêm .NET.</p>
+            </li>
+            <li class="step">
+              <h4>Chép đè vào thư mục game</h4>
+              <p>Chép <code>AutoUpdate.exe</code> vào <b>thư mục vừa cài, cùng chỗ với <code>CA.exe</code></b> (ghi đè file cũ).</p>
+            </li>
+            <li class="step">
+              <h4>Mở launcher</h4>
+              <p>Bấm đúp <code>AutoUpdate.exe</code>, chọn <b>Yes</b> ở hộp xác nhận quyền quản trị. Trang đầu tiên là trang dự án.</p>
+              <p><b>Lần đầu, cài các tệp của dự án vào game:</b> ở mục <b>Phiên bản launcher</b>, bấm nút của phiên bản <b>MỚI NHẤT</b> (<b>Cập nhật</b> hoặc <b>Cài N tệp</b>). Launcher hiện địa chỉ tải để bạn xác nhận, rồi tải và kiểm tra từng tệp (<code>nmco3.dll</code>, <code>ehsvc.dll</code>, <code>hsupdate.exe</code>, <code>CAPlay.dll</code>, <code>ddraw.dll</code>) trước khi ghi đè vào thư mục game. Máy chủ cộng đồng không cài được tệp chạy nào vào máy bạn, chỉ gói dữ liệu game.</p>
+              <div class="note">Nếu launcher báo thiếu <b>WebView2</b>, hãy cài <i>Microsoft Edge WebView2 Runtime</i> từ trang của Microsoft rồi mở lại. Windows 11 thường đã có sẵn.</div>
+            </li>
+            <li class="step">
+              <h4>Chọn máy chủ</h4>
+              <p>Launcher ban đầu chưa biết bạn chơi ở đâu, nút <b>Chưa cấu hình</b> sẽ bị tắt. Có hai cách:</p>
+              <ul>
+                <li><b>Cấu hình nhanh:</b> mở trang web của máy chủ cộng đồng bằng trình duyệt và bấm nút <b>Cấu hình nhanh</b>. Launcher hiện hộp xác nhận, bạn kiểm tra địa chỉ rồi chọn <b>Yes</b>. (Cách này cần bạn đã mở launcher ít nhất một lần.)</li>
+                <li><b>Nhập tay:</b> bấm nút <b>⚙</b> ở góc dưới bên phải, dán địa chỉ máy chủ vào ô <b>Địa chỉ máy chủ</b> và lưu.</li>
+              </ul>
+              <div class="note warn">Chỉ xác nhận địa chỉ của máy chủ mà bạn tin tưởng. Máy chủ biết tài khoản bạn dùng để chơi trên đó.</div>
+            </li>
+            <li class="step">
+              <h4>Để launcher cập nhật game</h4>
+              <p>Sau khi có máy chủ, launcher so file game của bạn với máy chủ và tự tải các file cần thiết để khớp với máy chủ đó. Lần đầu có thể lâu hơn. Khi xong, nút đổi thành <b>▶ Bắt Đầu</b>.</p>
+            </li>
+            <li class="step">
+              <h4>Vào game</h4>
+              <p>Bấm <b>▶ Bắt Đầu</b>. Ở màn hình đăng nhập của game, tạo tài khoản mới nếu chưa có, rồi đăng nhập, chọn kênh và vào phòng chờ.</p>
+              <p>Muốn chơi trong cửa sổ thì giữ tích <b>Chế độ cửa sổ</b> bên cạnh nút bắt đầu.</p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="card" id="ban-quyen">
+          <h2>Bản quyền &amp; trách nhiệm</h2>
+          <p>Boom Online, Crazy Arcade, VNG, Nexon cùng các tên gọi, nhãn hiệu, hình ảnh và nhân vật liên quan thuộc về chủ sở hữu tương ứng. OpenCrazyArcade <b>không liên quan, không liên đới</b> và không được các bên đó bảo trợ.</p>
+          <p style="margin-top:6px">Bộ cài và các file game do cộng đồng lưu trữ lại từ nguồn từng được phát hành công khai, chỉ dùng cho mục đích <b>cộng đồng, nghiên cứu và phi thương mại</b>. Người sử dụng tự chịu trách nhiệm khi lưu trữ và sử dụng.</p>
+        </section>
+
+        <section class="card" id="gap-loi">
+          <h2>Gặp lỗi?</h2>
+          <dl class="faq">
+            <dt>Windows hoặc phần mềm diệt virus chặn launcher.</dt>
+            <dd>Launcher và game là chương trình cộng đồng, chưa được ký số. Hãy thêm thư mục game vào danh sách cho phép của phần mềm diệt virus rồi thử lại.</dd>
+            <dt>Nút Bắt Đầu bị tắt.</dt>
+            <dd>Hoặc chưa cấu hình máy chủ (bước 5), hoặc launcher đang cập nhật game. Đợi dòng trạng thái ở góc dưới bên trái báo xong.</dd>
+            <dt>Không đổi được máy chủ hoặc phiên bản launcher.</dt>
+            <dd>Hãy thoát game trước. Launcher không đổi cấu hình khi game đang chạy.</dd>
+            <dt>Muốn quay về phiên bản launcher cũ.</dt>
+            <dd>Ở trang dự án (tab đầu tiên) có mục <b>Phiên bản launcher</b>, bấm <b>Hạ cấp</b> ở phiên bản bạn muốn.</dd>
+            <dt>Vẫn không được.</dt>
+            <dd>Gửi cho chủ máy chủ các file log trong <code>C:\ProgramData\OpenCrazyArcade\logs</code> (thư mục <code>launcher</code> và <code>ca</code>), hoặc <a href="https://github.com/OpenCrazyArcade/OpenCrazyArcade/issues">báo lỗi trên GitHub</a>.</dd>
+          </dl>
+        </section>
+      </div>
+
+      <aside>
+        <section class="card">
+          <h3>Tải về</h3>
+          <p style="margin-bottom:8px">Launcher cho Windows, một file duy nhất.</p>
+          <a class="btn primary block" href="https://github.com/OpenCrazyArcade/AutoUpdate/releases">Tải AutoUpdate.exe</a>
+          <a class="btn block" style="margin-top:8px" href="https://github.com/OpenCrazyArcade/Warehouse/releases/download/boom-online_253/boom-online_253.exe">Tải bộ cài game (490 MB)</a>
+          <p class="muted" style="margin-top:6px;word-break:break-all">SHA-256 bộ cài:<br>f3bd4d3ae3334c12c3a4a1ed94c5d17053e756a7ca17987983b2701883ddcc78</p>
+        </section>
+        <section class="card">
+          <h3>Trong trang này</h3>
+          <ul class="sidenav">
+            <li><a href="#cac-buoc">Các bước</a></li>
+            <li><a href="#gap-loi">Gặp lỗi?</a></li>
+            <li><a href="#ban-quyen">Bản quyền &amp; trách nhiệm</a></li>
+          </ul>
+        </section>
+        <section class="card">
+          <h3>Dự án</h3>
+          <ul class="sidenav">
+            <li><a href="/">Trang chủ dự án</a></li>
+            <li><a href="https://github.com/OpenCrazyArcade">GitHub Organization</a></li>
+            <li><a href="https://github.com/OpenCrazyArcade/OpenCrazyArcade/issues">Góp ý &amp; báo lỗi</a></li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="site-foot">
+      <div class="cols">
+        <div><h4>Chơi</h4><a href="/huong-dan/">Hướng dẫn tải &amp; chơi</a><a href="https://github.com/OpenCrazyArcade/AutoUpdate/releases">Tải launcher</a></div>
+        <div><h4>Dự án</h4><a href="/">Trang chủ</a><a href="https://github.com/OpenCrazyArcade">GitHub</a><a href="https://github.com/OpenCrazyArcade/OpenCrazyArcade/issues">Báo lỗi</a></div>
+      </div>
+      <div class="legal">OpenCrazyArcade - dự án cộng đồng phi thương mại, không liên quan hay liên đới tới Nexon, VNG hay chủ sở hữu nào của trò chơi. <a href="#ban-quyen">Lưu ý bản quyền</a>.</div>
+    </footer>
+  </main>
+</body>
+</html>

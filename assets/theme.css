@@ -1,0 +1,139 @@
+@import url("/assets/landing.css");
+/*
+ * OpenCrazyArcade theme, shared by the portal (style.css) and the launcher news page (on-launcher).
+ *
+ * Rebuilt from the real Boom Online site (boom.zing.vn, VNG, archived 2012; its header.jpg / nav-bg.png / footer.jpg / bnb.css):
+ *  - page #caebfc under a blue sky that runs from deep blue (#0d63df) at the top to pale blue, with a fine polka-dot texture;
+ *  - a glossy blue bar for the menu (the "nav-bg.png" pill);
+ *  - white content frames with big rounded corners and a light-blue outline;
+ *  - tables the way bnb.css draws them: #27a9ef head, #5fc6ff cell borders, #444 text, Tahoma 13px;
+ *  - a pale-blue rounded strip at the foot (footer.jpg).
+ * Flat colours and hard 1px edges only - no blurred shadows, no text shadows. None of the original artwork is copied.
+ */
+:root {
+  --blue: #0070b2;
+  --blue-bright: #27a9ef;
+  --blue-dark: #005c86;
+  --blue-deep: #0a4fb5;
+  --blue-light: #e8f7ff;
+  --sky-line: #5fc6ff;
+  --sky: #caebfc;
+  --foot: #aee0fe;
+  --cream: #ffffff;
+  --paper: #ffffff;
+  --orange: #f60;
+  --orange-2: #e56600;
+  --orange-dark: #b84a00;
+  --ink: #444444;
+  --ink-strong: #222222;
+  --ink-soft: #7a8a96;
+  --line: #bfe6fa;
+  --red: #d8362f;
+  --green: #2f9e44;
+  --purple: #7b55c4;
+  --page: 940px;
+  --font: Tahoma, Arial, Verdana, sans-serif;
+  /* glossy bar fill, like nav-bg.png: light top half, deep bottom half */
+  --gloss: linear-gradient(180deg, #3db3f7 0, #0d8ff0 48%, #0063e6 52%, #0a78f0 100%);
+  --gloss-orange: linear-gradient(180deg, #ffb35c 0, #ff8a1f 48%, #f26a00 52%, #ff8a1f 100%);
+  --gloss-red: linear-gradient(180deg, #ff8a80 0, #ee4a40 48%, #d02a20 52%, #e8453b 100%);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+
+body {
+  position: relative;
+  font: 13px/19px var(--font);
+  color: var(--ink);
+  min-height: 100vh;
+  background: var(--sky) linear-gradient(180deg, #0d63df 0, #2fa9f6 80px, #8ad6fc 190px, var(--sky) 300px) no-repeat;
+}
+/* the fine dot texture of the header */
+body::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 300px; z-index: 0; pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, .28) 1.4px, transparent 1.9px) 0 0 / 9px 9px;
+  -webkit-mask-image: linear-gradient(#000, transparent); mask-image: linear-gradient(#000, transparent);
+}
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { color: var(--orange-2); text-decoration: underline; }
+.muted { color: var(--ink-soft); font-size: 12px; }
+
+/* ---------------- menu bar: the glossy pill ---------------- */
+.topbar {
+  position: relative; z-index: 20;
+  max-width: var(--page); margin: 30px auto 0;
+  background: var(--gloss); border: 1px solid var(--blue-deep); border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55);
+  padding: 2px 22px; min-height: 38px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  color: #fff;
+}
+.topbar .muted { color: #e3f4fd; }
+.topbar nav { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.topbar nav a { color: #fff; font-weight: 700; padding: 1px 12px; border-radius: 12px; }
+.topbar nav a:hover { background: rgba(255, 255, 255, .22); text-decoration: none; color: #fff; }
+.topbar .brand { display: inline-flex; align-items: center; gap: 9px; color: #fff; font-weight: 700; font-size: 16px; }
+/* the Boom logo (the old Boom Online launcher's "logo new.png"), a little larger than the bar so it hangs over both edges */
+.topbar .brand::before, .balloon {
+  content: ""; display: inline-block; flex: none; width: 76px; height: 76px; margin: -20px 6px -20px -20px;
+  background: url(/assets/img/logo_boom.png) no-repeat center / contain;
+}
+
+.wrap { position: relative; z-index: 1; max-width: var(--page); margin: 0 auto; padding: 28px 0 24px; }
+/* the staff pages carry wide tables */
+body:has(.tabs) { --page: 1180px; }
+.wrap.narrow { max-width: 440px; }
+/* the pale foot strip */
+.wrap::after {
+  content: "OpenCrazyArcade - máy chủ cộng đồng, không liên kết với Nexon hay VNG";
+  display: block; margin-top: 18px; padding: 12px 22px; background: var(--foot); border-radius: 22px; color: var(--blue-dark); font-size: 12px; text-align: center;
+}
+
+/* ---------------- frames ---------------- */
+/* white frame with a light-blue outline and a plain white halo, the way the content box is drawn on the site */
+.card {
+  background: #fff; border: 1px solid var(--sky-line); border-radius: 14px; box-shadow: 0 0 0 4px rgba(255, 255, 255, .65);
+  padding: 14px 18px 16px; margin: 0 4px 22px; overflow: hidden;
+}
+/* section title: blue bold text, a bubble bullet and a dotted rule */
+.card h2, .card h3 {
+  margin: 0 0 12px; padding: 0 0 7px 20px; position: relative;
+  font-size: 14px; font-weight: 700; color: var(--blue); border-bottom: 1px dotted var(--sky-line);
+}
+.card h2::before, .card h3::before {
+  content: ""; position: absolute; left: 1px; top: 3px; width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, #fff 0 14%, rgba(255,255,255,0) 16%), radial-gradient(circle, #6fcdff, #1a8ae6 80%);
+}
+
+/* ---------------- buttons: small glossy pills ---------------- */
+.btn {
+  font: 700 13px/19px var(--font); cursor: pointer; color: #fff;
+  background: var(--gloss); border: 1px solid var(--blue-deep); border-radius: 14px; padding: 2px 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
+}
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+.btn:active:not(:disabled) { filter: brightness(.9); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.primary { background: var(--gloss-orange); border-color: var(--orange-dark); }
+.btn.danger { background: var(--gloss-red); border-color: #a31f1c; }
+.btn.small { padding: 0 10px; font-size: 12px; line-height: 17px; border-radius: 11px; }
+
+/* ---------------- form controls ---------------- */
+input, select, textarea {
+  width: 100%; font: 13px/19px var(--font); color: var(--ink);
+  background: #fff; border: 1px solid var(--sky-line); border-radius: 3px; padding: 3px 7px;
+}
+input::placeholder, textarea::placeholder { color: #9db3c4; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--orange); }
+.btn:focus-visible { outline: 1px dotted var(--blue-dark); outline-offset: 2px; }
+.field { display: block; margin-bottom: 10px; }
+.field > span { display: block; margin-bottom: 3px; color: var(--blue-dark); font-weight: 700; }
+.field small { color: var(--ink-soft); font-size: 12px; }
+
+@media (max-width: 980px) { .topbar { margin: 12px 10px 0; } .wrap { padding: 14px 8px 20px; } }
+
+/* character cards from the client's shop (Shop/S_Chara*) */
+.cast { display: flex; gap: 8px; justify-content: center; margin: 14px 0 4px; }
+.cast img { display: block; width: calc(33.333% - 6px); height: auto; border-radius: 6px; }
